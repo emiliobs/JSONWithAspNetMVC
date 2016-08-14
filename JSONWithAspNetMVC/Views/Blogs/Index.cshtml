@@ -1,0 +1,71 @@
+﻿@model JSONWithAspNetMVC.Models.BLog
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+
+ }
+<script src="~/js/js.js"></script>
+<link href="~/css/css.css" rel="stylesheet" />
+
+<table>
+    <tr>
+        <td>
+            <h2>Get JSON Data With ASP.NET MVC.</h2>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Select Category: @Html.DropDownList("CategoryId", ViewBag.CategoryId as SelectList, "-- Select a Category. --")         
+        </td>
+    </tr>
+</table>
+<br />
+<table id="blogTable" class="zui-table zui-table-rounded">
+    <thead>
+        <tr>
+            <th>Post Id</th>
+            <th>Title</th>
+            <th>Full Content</th>
+            <th>Meta Description</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Scripts {
+
+   @Scripts.Render("~/bundles/jqueryval")   
+   
+    <script>
+        $(document).ready(function () {
+            $("#CategoryId").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetBlogDetailByCategory")',
+                    datatype: JSON,
+                    data: { 'categoryId': $("#CategoryId").val() },
+                    success: function (data) {
+                        $('#blogTable tbody').empty();
+
+                        $.each(data, function (i, item) {
+                            var rows = "<tr>"
+                    + "<td>" + item.PostedId + "</td>"
+                    + "<td>" + item.PostTitle + "</td>"
+                    + "<td>" + item.ShortPostContent + "</td>"
+                    + "<td>" + item.MetaDescription + "</td>"
+                    + "</tr>";
+                            $('#blogTable tbody').append(rows);
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve Cities.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+}
+
